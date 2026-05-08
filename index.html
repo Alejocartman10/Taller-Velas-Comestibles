@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Taller de Velas Comestibles | Sabores Artesanales</title>
+    <!-- Google Fonts y Font Awesome desde CDN -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            user-select: none; /* evita selección accidental, mejora experiencia */
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #2b1b0e;
+            background-image: radial-gradient(circle at 10% 20%, #3e2a1f, #1f1409);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Contenedor principal */
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            perspective: 1200px;
+            overflow: hidden;
+        }
+
+        /* Slides wrapper */
+        .slides-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide {
+            position: absolute;
+            width: 80%;
+            max-width: 1100px;
+            height: 80%;
+            max-height: 650px;
+            background: rgba(255, 248, 235, 0.97);
+            border-radius: 48px;
+            box-shadow: 0 30px 45px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 215, 160, 0.3);
+            backdrop-filter: blur(2px);
+            padding: 2rem 2.5rem;
+            transition: all 0.65s cubic-bezier(0.23, 1, 0.32, 1);
+            opacity: 0;
+            transform: translateX(80px) scale(0.92) rotateY(5deg);
+            visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+            scrollbar-width: thin;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: translateX(0) scale(1) rotateY(0deg);
+            visibility: visible;
+            z-index: 10;
+            box-shadow: 0 40px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Animaciones de entrada específicas para transiciones fluidas */
+        .slide.prev-exit {
+            transform: translateX(-80px) scale(0.92) rotateY(-5deg);
+            opacity: 0;
+        }
+
+        /* scroll elegante */
+        .slide::-webkit-scrollbar {
+            width: 6px;
+        }
+        .slide::-webkit-scrollbar-track {
+            background: #f0e0cc;
+            border-radius: 10px;
+        }
+        .slide::-webkit-scrollbar-thumb {
+            background: #b97f44;
+            border-radius: 10px;
+        }
+
+        /* contenido */
+        .slide-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        h1, h2, h3 {
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        .slide h1 {
+            font-size: 3.5rem;
+            background: linear-gradient(135deg, #c27e3a, #794f1f);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+        }
+
+        .slide h2 {
+            font-size: 2.5rem;
+            color: #5a3a20;
+            border-left: 6px solid #e6a157;
+            padding-left: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .highlight {
+            background: #f6e3c9;
+            display: inline-block;
+            padding: 0.2rem 0.8rem;
+            border-radius: 40px;
+            color: #a3511a;
+            font-weight: 600;
+        }
+
+        .price-badge {
+            background: #d9892b;
+            color: white;
+            padding: 0.6rem 1.8rem;
+            border-radius: 60px;
+            font-weight: 800;
+            font-size: 1.4rem;
+            width: fit-content;
+            box-shadow: 0 8px 14px rgba(0,0,0,0.1);
+            margin: 1.5rem 0;
+        }
+
+        .flavor-grid {
+            display: flex;
+            gap: 1.5rem;
+            flex-wrap: wrap;
+            margin: 1.8rem 0;
+        }
+        .flavor-card {
+            background: #fff6ed;
+            border-radius: 32px;
+            padding: 1rem 1.8rem;
+            text-align: center;
+            flex: 1 1 150px;
+            box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+            transition: transform 0.2s;
+            border: 1px solid #ffdcb0;
+        }
+        .flavor-card i {
+            font-size: 2.5rem;
+            color: #bd741d;
+            margin-bottom: 0.5rem;
+        }
+        .flavor-card h4 {
+            font-size: 1.4rem;
+            margin: 0.5rem 0;
+        }
+
+        .btn-cta {
+            background: #b16224;
+            border: none;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 0.9rem 2rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: fit-content;
+            margin-top: 1rem;
+            box-shadow: 0 5px 0 #5e3112;
+            font-family: inherit;
+        }
+        .btn-cta:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 #5e3112;
+        }
+
+        /* navegación */
+        .nav-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            right: 0;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            z-index: 30;
+        }
+        .nav-btn {
+            background: rgba(0,0,0,0.6);
+            backdrop-filter: blur(12px);
+            border: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 60px;
+            font-size: 1.8rem;
+            color: #ffddb0;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        }
+        .nav-btn:hover {
+            background: #b16224;
+            color: white;
+            transform: scale(1.05);
+        }
+        .indicators {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 16px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(8px);
+            padding: 0.6rem 1.5rem;
+            border-radius: 80px;
+            z-index: 20;
+        }
+        .indicator {
+            width: 12px;
+            height: 12px;
+            border-radius: 12px;
+            background: #d2b48c;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .indicator.active {
+            background: #f5b042;
+            width: 32px;
+            box-shadow: 0 0 6px #ffc107;
+        }
+        /* mensaje de teclado */
+        .key-hint {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            padding: 8px 18px;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            color: #ecd9b4;
+            font-weight: 500;
+            z-index: 30;
+            pointer-events: none;
+        }
+        @media (max-width: 680px) {
+            .slide { width: 90%; padding: 1.2rem; height: 85%; }
+            .slide h1 { font-size: 2.4rem; }
+            .slide h2 { font-size: 1.8rem; }
+            .flavor-card { padding: 0.6rem 1rem; }
+            .flavor-card i { font-size: 1.8rem; }
+        }
+        footer {
+            font-size: 0.75rem;
+            color: #926d42;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="presentation-container">
+    <div class="slides-wrapper" id="slidesWrapper">
+        <!-- SLIDE 1 - Portada / Introducción taller -->
+        <div class="slide" data-index="0">
+            <div class="slide-content">
+                <div>
+                    <span class="highlight">✨ Edición Especial ✨</span>
+                    <h1>Taller de Velas Comestibles</h1>
+                    <p style="font-size: 1.2rem; margin: 1rem 0 0.5rem; line-height: 1.4;">Descubre el arte de crear velas 100% comestibles con ingredientes gourmet. <strong>Mantequilla, romero, pesto y chocolate</strong> cobran vida en llamas que saben a gloria.</p>
+                    <div class="price-badge">🔥 Inscripciones abiertas 🔥</div>
+                    <p>🗓️ Próximo taller: 12 y 13 de Abril · 4 sesiones prácticas<br>📍 Online en vivo + Kit de ingredientes a domicilio</p>
+                </div>
+                <div>
+                    <button class="btn-cta" id="nextFromSlide1">¡Quiero inscribirme! →</button>
+                    <footer>🌟 Para foodies, chefs y curiosos 🌟</footer>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 2 - ¿Qué aprenderás? + beneficios -->
+        <div class="slide" data-index="1">
+            <div class="slide-content">
+                <div>
+                    <h2><i class="fas fa-mortar-board"></i> Aprenderás a:</h2>
+                    <ul style="margin: 1.2rem 0 1.5rem 1.5rem; font-size: 1.05rem; line-height: 1.6;">
+                        <li>✅ Elaborar la base de mantequilla infusionada</li>
+                        <li>✅ Técnicas perfectas de textura y punto de fusión</li>
+                        <li>✅ Crear aromas y sabores naturales (romero, albahaca, cacao)</li>
+                        <li>✅ Decoración comestible con especias y flores</li>
+                        <li>✅ Emplatado y presentación "wow" para eventos</li>
+                    </ul>
+                    <div class="flavor-grid" style="justify-content: flex-start;">
+                        <div class="flavor-card"><i class="fas fa-seedling"></i><h4>Romero</h4><small>aromático</small></div>
+                        <div class="flavor-card"><i class="fas fa-utensils"></i><h4>Pesto</h4><small>sabroso</small></div>
+                        <div class="flavor-card"><i class="fas fa-chocolate-bar"></i><h4>Chocolate</h4><small>irresistible</small></div>
+                    </div>
+                </div>
+                <div>
+                    <button class="btn-cta" id="nextFromSlide2">Siguiente sabor →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 3 - Velas Estrella: Mantequilla, Romero, Pesto & Chocolate -->
+        <div class="slide" data-index="2">
+            <div class="slide-content">
+                <div>
+                    <h2><i class="fas fa-candle"></i> Nuestras velas estrella</h2>
+                    <div class="flavor-grid">
+                        <div class="flavor-card"><i class="fas fa-butter"></i><h4>Vela Mantequilla</h4><p>Pura mantequilla de pasto, toques de sal marina. Firmeza perfecta.</p></div>
+                        <div class="flavor-card"><i class="fas fa-rose"></i><h4>Mantequilla & Romero</h4><p>Infusión herbal, ideal para untar o derretir sobre carnes.</p></div>
+                        <div class="flavor-card"><i class="fas fa-leaf"></i><h4>Vela de Pesto</h4><p>Albahaca, piñones, queso parmesano. Un manjar líquido.</p></div>
+                        <div class="flavor-card"><i class="fas fa-mug-hot"></i><h4>Vela Chocolate</h4><p>Chocolate oscuro + avellanas, puro placer derretible.</p></div>
+                    </div>
+                    <p style="background: #faf0e1; padding: 1rem; border-radius: 28px; margin-top: 0.5rem;"><i class="fas fa-lightbulb"></i> <strong>Dato único:</strong> La mecha es comestible (pasta de arroz / hojaldre crujiente). ¡La magia está en cada detalle!</p>
+                </div>
+                <div>
+                    <button class="btn-cta" id="nextFromSlide3">Ver método del taller →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 4 - Incluye kit / Beneficios extra -->
+        <div class="slide" data-index="3">
+            <div class="slide-content">
+                <div>
+                    <h2><i class="fas fa-gift"></i> ¿Qué incluye el taller?</h2>
+                    <ul style="margin: 1rem 0 1.5rem 1.5rem; font-size: 1rem;">
+                        <li>📦 Kit de ingredientes premium (4 bases + moldes + mechas)</li>
+                        <li>🎥 Clases en vivo con chef pastelero + acceso grabación</li>
+                        <li>📘 Recetario digital con 8 variaciones creativas</li>
+                        <li>🏅 Certificado de "Maestro Vela Comestible"</li>
+                        <li>🤝 Comunidad privada para resolver dudas</li>
+                    </ul>
+                    <div class="price-badge" style="background: #a5692c;">Precio lanzamiento: $59 USD</div>
+                    <p style="margin-top: 10px;"><i class="fas fa-truck"></i> Envío gratis nacional · Cupos limitados</p>
+                </div>
+                <div>
+                    <button class="btn-cta" id="nextFromSlide4">¡Quiero mi lugar! →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- SLIDE 5 - Registro / Call to action final -->
+        <div class="slide" data-index="4">
+            <div class="slide-content">
+                <div style="text-align: center;">
+                    <i class="fas fa-fire" style="font-size: 3rem; color: #e67e22;"></i>
+                    <h2 style="border: none; text-align: center;">¡Prende tu creatura gourmet!</h2>
+                    <p style="font-size: 1.1rem; max-width: 80%; margin: 0 auto;">Reserva tu plaza y recibe el kit directamente en tu hogar. Aprende a sorprender en cualquier celebración.</p>
+                    <div style="background: #e7cfb0; border-radius: 60px; padding: 1rem; margin: 1.5rem auto; max-width: 300px;">
+                        <i class="fas fa-envelope"></i> taller@velascomestibles.com<br>
+                        <i class="fab fa-whatsapp"></i> +34 612 345 678
+                    </div>
+                    <button class="btn-cta" id="registerFinalBtn" style="background: #c2712e; font-size: 1.4rem; padding: 0.8rem 2rem;">Inscribirme ahora →</button>
+                </div>
+                <footer>✨ Transforma la mesa en una experiencia sensorial ✨</footer>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Indicadores y botones fijos -->
+<div class="indicators" id="indicators"></div>
+<div class="nav-controls">
+    <button class="nav-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+    <button class="nav-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+</div>
+<div class="key-hint">
+    <i class="fas fa-arrow-left"></i> <i class="fas fa-arrow-right"></i>  Navega con las flechas
+</div>
+
+<script>
+    (function() {
+        // ----- Configuración de presentación -----
+        const slides = document.querySelectorAll('.slide');
+        let currentIndex = 0;
+        const totalSlides = slides.length;
+        let isTransitioning = false;   // evitar spam de teclado/botones durante animación
+
+        // Función para actualizar la vista: clase active y sincronizar indicadores
+        function updateSlides(newIndex) {
+            if (isTransitioning) return false;
+            if (newIndex < 0 || newIndex >= totalSlides) return false;
+            if (newIndex === currentIndex) return false;
+
+            isTransitioning = true;
+
+            // 1. Remover clase active del slide actual
+            const currentSlide = slides[currentIndex];
+            currentSlide.classList.remove('active');
+            // 2. Añadir la animación de salida opcional (sutil)
+            // Para dar un efecto más dinámico, agregamos una clase de salida en dirección opuesta.
+            // Determinamos dirección: si newIndex > currentIndex (hacia adelante) o atrás.
+            if (newIndex > currentIndex) {
+                // salida hacia izquierda
+                currentSlide.style.transform = 'translateX(-60px) scale(0.92) rotateY(-4deg)';
+                currentSlide.style.opacity = '0';
+            } else {
+                currentSlide.style.transform = 'translateX(60px) scale(0.92) rotateY(4deg)';
+                currentSlide.style.opacity = '0';
+            }
+            
+            // 3. Preparamos el nuevo slide: aseguramos que su transform inicial sea desde el lado contrario
+            const nextSlide = slides[newIndex];
+            nextSlide.style.visibility = 'visible';
+            if (newIndex > currentIndex) {
+                nextSlide.style.transform = 'translateX(60px) scale(0.92) rotateY(4deg)';
+                nextSlide.style.opacity = '0';
+            } else {
+                nextSlide.style.transform = 'translateX(-60px) scale(0.92) rotateY(-4deg)';
+                nextSlide.style.opacity = '0';
+            }
+            
+            // Forzar reflow para aplicar la transición después de setear posiciones iniciales
+            void nextSlide.offsetHeight;
+            
+            // Añadir clase active
+            nextSlide.classList.add('active');
+            // Forzar reflow para transición completa
+            nextSlide.style.transform = 'translateX(0) scale(1) rotateY(0deg)';
+            nextSlide.style.opacity = '1';
+            
+            // Limpiar estilos inline del slide anterior después de la transición
+            const resetStyles = () => {
+                currentSlide.style.transform = '';
+                currentSlide.style.opacity = '';
+                // No eliminamos la clase active porque ya no la tiene, pero aseguramos que pierda estilos
+                nextSlide.style.transform = '';
+                nextSlide.style.opacity = '';
+                isTransitioning = false;
+                // sincronizar indicadores
+                updateIndicators(newIndex);
+                // También después de la animación dejar correcto si algun estilo residual
+                slides.forEach(slide => {
+                    if (slide !== nextSlide) {
+                        if (slide.style.transform) slide.style.transform = '';
+                        if (slide.style.opacity) slide.style.opacity = '';
+                    }
+                });
+                currentIndex = newIndex;
+                // remover event listener extra
+                nextSlide.removeEventListener('transitionend', resetStyles);
+            };
+            nextSlide.addEventListener('transitionend', resetStyles, { once: true });
+            // fallback por si transitionend no se dispara (casi nunca)
+            setTimeout(() => {
+                if (isTransitioning) {
+                    resetStyles();
+                }
+            }, 700);
+            
+            updateIndicators(newIndex);
+            return true;
+        }
+
+        // Actualizar solo indicadores visuales
+        function updateIndicators(index) {
+            const indicators = document.querySelectorAll('.indicator');
+            indicators.forEach((ind, i) => {
+                if (i === index) {
+                    ind.classList.add('active');
+                } else {
+                    ind.classList.remove('active');
+                }
+            });
+        }
+
+        // Crear indicadores dinámicos
+        function buildIndicators() {
+            const container = document.getElementById('indicators');
+            container.innerHTML = '';
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('indicator');
+                if (i === currentIndex) dot.classList.add('active');
+                dot.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (!isTransitioning && i !== currentIndex) {
+                        updateSlides(i);
+                    }
+                });
+                container.appendChild(dot);
+            }
+        }
+
+        // Navegación pública
+        function nextSlide() {
+            if (currentIndex + 1 < totalSlides && !isTransitioning) {
+                updateSlides(currentIndex + 1);
+            }
+        }
+        function prevSlide() {
+            if (currentIndex - 1 >= 0 && !isTransitioning) {
+                updateSlides(currentIndex - 1);
+            }
+        }
+
+        // Configurar eventos y teclado
+        function initEvents() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            prevBtn.addEventListener('click', () => prevSlide());
+            nextBtn.addEventListener('click', () => nextSlide());
+
+            window.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowLeft') {
+                    e.preventDefault();
+                    prevSlide();
+                } else if (e.key === 'ArrowRight') {
+                    e.preventDefault();
+                    nextSlide();
+                }
+            });
+
+            // Botones adicionales internos de cada slide para avanzar/inscribir (experiencia fluida)
+            const btnNext1 = document.getElementById('nextFromSlide1');
+            if (btnNext1) btnNext1.addEventListener('click', () => nextSlide());
+            const btnNext2 = document.getElementById('nextFromSlide2');
+            if (btnNext2) btnNext2.addEventListener('click', () => nextSlide());
+            const btnNext3 = document.getElementById('nextFromSlide3');
+            if (btnNext3) btnNext3.addEventListener('click', () => nextSlide());
+            const btnNext4 = document.getElementById('nextFromSlide4');
+            if (btnNext4) btnNext4.addEventListener('click', () => nextSlide());
+            
+            // Botón final de registro muestra alerta (acción comercial atractiva)
+            const regBtn = document.getElementById('registerFinalBtn');
+            if (regBtn) {
+                regBtn.addEventListener('click', () => {
+                    alert("🎉 ¡Gracias por tu interés! Te redirigiremos a nuestra pasarela de pago.\n\nRecibirás un correo con los detalles del taller de Velas Comestibles. ¡La magia gourmet te espera!");
+                    // Simular acción de registro (opcional redireccion simulada)
+                    // Podría abrir un formulario pero mantiene presentación simple.
+                });
+            }
+        }
+
+        // Ajustar estado inicial (todas slides ocultas excepto active, aplicar estilos base)
+        function initSlides() {
+            // Aseguramos que solo slide[0] tenga clase active y estilos correctos
+            slides.forEach((slide, idx) => {
+                if (idx === 0) {
+                    slide.classList.add('active');
+                    slide.style.visibility = 'visible';
+                    slide.style.opacity = '1';
+                    slide.style.transform = 'translateX(0) scale(1) rotateY(0deg)';
+                } else {
+                    slide.classList.remove('active');
+                    slide.style.visibility = 'hidden';
+                    slide.style.opacity = '0';
+                    slide.style.transform = 'translateX(80px) scale(0.92) rotateY(5deg)';
+                }
+            });
+            currentIndex = 0;
+            buildIndicators();
+            updateIndicators(0);
+            // pequeños ajustes de estilos por si el backdrop
+        }
+
+        // Agregamos animación de carga de entrada extra- sutil
+        initSlides();
+        initEvents();
+
+        // Opcional: Transiciones táctiles y evitar clics durante transición
+        window.addEventListener('touchstart', (e) => {
+            // Solo para prevenir acciones extra, pero nada más
+        });
+        // Prevenir conflictos de doble navegación
+        const wrapper = document.querySelector('.presentation-container');
+        wrapper.addEventListener('transitionstart', (e) => {
+            // no hacer nada
+        });
+    })();
+</script>
+</body>
+</html>
